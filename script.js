@@ -1,58 +1,70 @@
 "use strict";
 
+// Variables from HTML
+
 const message = document.querySelector(".message");
 const number = document.querySelector(".number");
 const score = document.querySelector(".score");
 const againButton = document.querySelector(".again");
+const checkButton = document.querySelector(".check");
+const body = document.querySelector("body");
+const bestScore = document.querySelector(".highscore");
+const guess = document.querySelector(".guess");
+
+// Variables to game functionality
 
 let userScore = 20;
 let secretNumber = Math.trunc(Math.random() * 20) + 1;
 let highscore = 0;
 
-document.querySelector(".check").addEventListener("click", function() {
+// Helper Functions
+
+const displayMessage = function(mess) {
+    message.textContent = mess;
+};
+
+// Game Logic
+
+checkButton.addEventListener("click", function() {
     const guess = Number(document.querySelector(".guess").value);
     if (!guess) {
-        message.textContent = "No number!";
+        displayMessage("No number!");
         if (userScore > 1) {
             userScore--;
             score.textContent = userScore;
         } else {
-            message.textContent = "You Lost";
+            displayMessage("You lost!");
         }
     } else if (guess === secretNumber) {
-        message.textContent = "Correct Number!";
-        document.querySelector(".number").textContent = secretNumber;
-        document.querySelector("body").style.backgroundColor = "#60b347";
-        document.querySelector(".number").style.width = "30rem";
+        displayMessage("Correct Number!");
+        number.textContent = secretNumber;
+        body.style.backgroundColor = "#60b347";
+        number.style.width = "30rem";
         if (userScore > highscore) {
             highscore = userScore;
-            document.querySelector(".highscore").textContent = highscore;
+            bestScore.textContent = highscore;
         }
-    } else if (guess > secretNumber) {
-        message.textContent = "Too High!";
+    } else if (guess !== secretNumber) {
         if (userScore > 1) {
             userScore--;
             score.textContent = userScore;
+            displayMessage(guess > secretNumber ? "Too High!" : "Too Low!");
         } else {
-            message.textContent = "You Lost";
-        }
-    } else if (guess < secretNumber) {
-        message.textContent = "Too Low!";
-        if (userScore > 1) {
-            userScore--;
-            score.textContent = userScore;
-        } else {
-            message.textContent = "You Lost";
+            displayMessage("You lost the game!");
+            score.textContent = 0;
         }
     }
 });
 
+// Reset Button
+
 againButton.addEventListener("click", function() {
     userScore = 20;
-    document.querySelector("body").style.backgroundColor = "#222";
-    document.querySelector(".number").style.width = "15rem";
-    document.querySelector(".guess").value = "";
+    body.style.backgroundColor = "#222";
+    number.style.width = "15rem";
+    guess.value = "";
     secretNumber = Math.trunc(Math.random() * 20) + 1;
     score.textContent = userScore;
-    message.textContent = "Start guessing...";
+    displayMessage("Start guessing...");
+    number.textContent = "?";
 });
